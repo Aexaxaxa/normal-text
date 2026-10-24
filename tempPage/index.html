@@ -5,28 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Черновая HTML-структура главной страницы сервиса «Нормальный Текст»."
+      content="Нормальный Текст — сервис типографической нормализации текста и документов."
     />
     <link rel="stylesheet" href="./styles.css" />
     <title>Нормальный Текст — редактор</title>
   </head>
   <body>
     <header class="site-header">
-      <p class="project-name">Нормальный Текст</p>
+      <div class="site-header__inner">
+        <p class="project-name">Нормальный Текст</p>
+        <p class="project-tagline">Типографическая нормализация без ИИ</p>
+      </div>
     </header>
 
     <main class="page">
-      <section aria-labelledby="editor-title">
-        <h1 id="editor-title">Типографическая обработка текста</h1>
-        <p>
-          Вставьте текст или загрузите TXT/DOCX, выберите параметры и запустите проверку.
-        </p>
+      <section class="editor" aria-labelledby="editor-title">
+        <div class="editor__intro">
+          <p class="eyebrow">Редактор</p>
+          <h1 id="editor-title">Приведите текст к типографическим нормам</h1>
+          <p class="editor__description">
+            Вставьте текст или загрузите TXT/DOCX, выберите параметры и запустите проверку.
+            Все найденные изменения можно будет проверить перед экспортом.
+          </p>
+        </div>
 
         <form class="editor-form">
           <section class="editor-panel" aria-labelledby="source-title">
-            <h2 id="source-title">Исходный текст</h2>
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">Шаг 1</p>
+                <h2 id="source-title">Исходный текст</h2>
+              </div>
+              <span class="file-support">TXT · DOCX</span>
+            </div>
 
-            <label for="source-text">Текст для обработки</label>
+            <label class="field-label" for="source-text">Текст для обработки</label>
             <textarea
               id="source-text"
               name="sourceText"
@@ -34,56 +47,77 @@
               placeholder="Введите или вставьте текст"
             ></textarea>
 
-            <label for="source-file">Загрузить файл TXT или DOCX</label>
+            <label class="field-label" for="source-file">Загрузить файл TXT или DOCX</label>
             <input
               id="source-file"
               name="sourceFile"
               type="file"
               accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             />
+            <p class="field-hint">Файл обрабатывается локально в браузере.</p>
           </section>
 
           <aside class="settings-panel" aria-labelledby="settings-title">
-            <h2 id="settings-title">Параметры</h2>
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">Шаг 2</p>
+                <h2 id="settings-title">Параметры</h2>
+              </div>
+            </div>
 
-            <fieldset>
+            <fieldset class="settings-group">
               <legend>Язык правил</legend>
-              <label>
-                <input type="radio" name="language" value="ru" checked />
-                Русский
-              </label>
-              <label>
-                <input type="radio" name="language" value="en" />
-                English
-              </label>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="language" value="ru" checked />
+                  <span>Русский</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="language" value="en" />
+                  <span>English</span>
+                </label>
+              </div>
             </fieldset>
 
-            <label for="mode">Режим обработки</label>
-            <select id="mode" name="mode">
-              <option value="basic">Базовый</option>
-              <option value="extended">Расширенный</option>
-              <option value="custom">Пользовательский</option>
-            </select>
+            <div class="settings-group">
+              <label class="field-label" for="mode">Режим обработки</label>
+              <select id="mode" name="mode">
+                <option value="basic">Базовый</option>
+                <option value="extended">Расширенный</option>
+                <option value="custom">Пользовательский</option>
+              </select>
+            </div>
 
-            <p>Активно правил: <strong>24</strong></p>
+            <div class="rules-summary" aria-label="Сводка активных правил">
+              <span>Активно правил</span>
+              <strong>24</strong>
+            </div>
 
-            <button type="button">Настроить правила</button>
-            <button type="submit">Проверить текст</button>
+            <div class="settings-actions">
+              <button class="button button--secondary" type="button">Настроить правила</button>
+              <button class="button button--primary" type="submit">Проверить текст</button>
+            </div>
           </aside>
         </form>
       </section>
 
-      <section aria-labelledby="structure-note">
-        <h2 id="structure-note">О текущей версии</h2>
+      <section class="service-note" aria-labelledby="service-note-title">
+        <div>
+          <p class="eyebrow">Как это работает</p>
+          <h2 id="service-note-title">Контроль остаётся у пользователя</h2>
+        </div>
         <p>
-          Эта страница демонстрирует только семантическую HTML-структуру главного экрана.
-          Полноценная логика обработки и финальный дизайн будут реализованы на следующих этапах.
+          Сервис применяет только выбранные формализованные правила. После обработки каждое
+          изменение показывается в формате «было / стало» и может быть принято или отклонено.
         </p>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>Учебный проект. Лабораторная работа №4.</p>
+      <div class="site-footer__inner">
+        <p>Учебный проект «Нормальный Текст»</p>
+        <p>TXT · DOCX · RU · EN</p>
+      </div>
     </footer>
   </body>
 </html>
