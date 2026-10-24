@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Черновая HTML-структура главной страницы сервиса «Нормальный Текст»."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Нормальный Текст — редактор</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <p class="project-name">Нормальный Текст</p>
+    </header>
+
+    <main class="page">
+      <section aria-labelledby="editor-title">
+        <h1 id="editor-title">Типографическая обработка текста</h1>
+        <p>
+          Вставьте текст или загрузите TXT/DOCX, выберите параметры и запустите проверку.
+        </p>
+
+        <form class="editor-form">
+          <section class="editor-panel" aria-labelledby="source-title">
+            <h2 id="source-title">Исходный текст</h2>
+
+            <label for="source-text">Текст для обработки</label>
+            <textarea
+              id="source-text"
+              name="sourceText"
+              rows="16"
+              placeholder="Введите или вставьте текст"
+            ></textarea>
+
+            <label for="source-file">Загрузить файл TXT или DOCX</label>
+            <input
+              id="source-file"
+              name="sourceFile"
+              type="file"
+              accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            />
+          </section>
+
+          <aside class="settings-panel" aria-labelledby="settings-title">
+            <h2 id="settings-title">Параметры</h2>
+
+            <fieldset>
+              <legend>Язык правил</legend>
+              <label>
+                <input type="radio" name="language" value="ru" checked />
+                Русский
+              </label>
+              <label>
+                <input type="radio" name="language" value="en" />
+                English
+              </label>
+            </fieldset>
+
+            <label for="mode">Режим обработки</label>
+            <select id="mode" name="mode">
+              <option value="basic">Базовый</option>
+              <option value="extended">Расширенный</option>
+              <option value="custom">Пользовательский</option>
+            </select>
+
+            <p>Активно правил: <strong>24</strong></p>
+
+            <button type="button">Настроить правила</button>
+            <button type="submit">Проверить текст</button>
+          </aside>
+        </form>
+      </section>
+
+      <section aria-labelledby="structure-note">
+        <h2 id="structure-note">О текущей версии</h2>
+        <p>
+          Эта страница демонстрирует только семантическую HTML-структуру главного экрана.
+          Полноценная логика обработки и финальный дизайн будут реализованы на следующих этапах.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Учебный проект. Лабораторная работа №4.</p>
+    </footer>
+  </body>
+</html>
