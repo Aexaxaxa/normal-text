@@ -164,6 +164,11 @@ export default function App() {
   const startProcessing = () => {
     if (!text.trim()) {
       setError('Введите текст для проверки.')
+      setMessage({
+        kind: 'error',
+        title: 'Нет текста для проверки',
+        message: 'Введите текст вручную или загрузите файл TXT/DOCX.',
+      })
       return
     }
 
@@ -313,7 +318,10 @@ export default function App() {
           statusMessage={statusMessage}
           onClose={() => setNoChangesOpen(false)}
           onCopy={() => void copyText(text)}
-          onExport={() => setExportOpen(true)}
+          onExport={() => {
+            setNoChangesOpen(false)
+            setExportOpen(true)
+          }}
         />
       )}
       {message && <MessageModal {...message} onClose={() => setMessage(null)} />}
