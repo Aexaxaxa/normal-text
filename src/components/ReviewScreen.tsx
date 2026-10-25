@@ -1,4 +1,4 @@
-import type { TypographyChange } from '../lib/typography'
+import type { ReactNode } from 'react'\nimport type { TypographyChange } from '../lib/typography'
 
 type ReviewScreenProps = {
   source: string
@@ -14,7 +14,7 @@ type ReviewScreenProps = {
 
 function ResultText({ source, changes, selectedChangeId }: Pick<ReviewScreenProps, 'source' | 'changes' | 'selectedChangeId'>) {
   const sorted = [...changes].sort((a, b) => a.start - b.start)
-  const parts: Array<string | JSX.Element> = []
+  const parts: ReactNode[] = []
   let cursor = 0
 
   sorted.forEach((change) => {
