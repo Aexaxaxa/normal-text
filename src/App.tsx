@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { EditorScreen } from './components/EditorScreen'
 import { ExportModal, MessageModal, NoChangesModal, UploadModal } from './components/AppModals'
 import { ProcessingModal } from './components/ProcessingModal'
@@ -14,7 +15,6 @@ import {
   type TypographyMode,
 } from './lib/typography'
 
-type Screen = 'editor' | 'review' | 'rules'
 type MessageState = { kind: 'error' | 'success'; title: string; message: string } | null
 type CustomRules = Record<TypographyLanguage, string[]>
 
@@ -29,10 +29,17 @@ function defaultCustomRules(): CustomRules {
 
 function loadSettings(): { language: TypographyLanguage; mode: TypographyMode; custom: CustomRules } {
   const fallback = { language: 'ru' as const, mode: 'full' as const, custom: defaultCustomRules() }
+
   try {
     const raw = localStorage.getItem(SETTINGS_KEY)
     if (!raw) return fallback
-    const parsed = JSON.parse(raw) as Partial<{ language: TypographyLanguage; mode: TypographyMode; custom: CustomRules }>
+
+    const parsed = JSON.parse(raw) as Partial<{
+      language: TypographyLanguage
+      mode: TypographyMode
+      custom: CustomRules
+    }>
+
     return {
       language: parsed.language === 'en' ? 'en' : 'ru',
       mode: parsed.mode === 'basic' || parsed.mode === 'custom' ? parsed.mode : 'full',
@@ -47,8 +54,10 @@ function loadSettings(): { language: TypographyLanguage; mode: TypographyMode; c
 }
 
 export default function App() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const initial = useMemo(loadSettings, [])
-  const [screen, setScreen] = useState<Screen>('editor')
+
   const [text, setText] = useState('')
   const [language, setLanguage] = useState<TypographyLanguage>(initial.language)
   const [mode, setMode] = useState<TypographyMode>(initial.mode)
@@ -72,12 +81,13 @@ export default function App() {
     [language, mode, customRules],
   )
   const resultText = useMemo(() => buildResultText(text, changes), [text, changes])
+  const isReviewRoute = location.pathname === '/review'
 
   useEffect(() => {
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify({ language, mode, custom: customRules }))
     } catch {
-      // Работа приложения не должна зависеть от доступности localStorage.
+      // Настройки не должны блокировать приложение, если localStorage недоступен.
     }
   }, [language, mode, customRules])
 
@@ -91,7 +101,7 @@ export default function App() {
   }
 
   const goToEditor = () => {
-    setScreen('editor')
+    navigate('/')
     setSelectedChangeId(null)
     setStatusMessage('')
   }
@@ -108,8 +118,12 @@ export default function App() {
       setSourceFormat(imported.format)
       setDocumentStructure(imported.structure)
       setError('')
-      setScreen('editor')
-      setMessage({ kind: 'success', title: 'Файл загружен', message: `Текст из «${imported.fileName}» готов к проверке.` })
+      navigate('/')
+      setMessage({
+        kind: 'success',
+        title: 'Файл загружен',
+        message: `Текст из «${imported.fileName}» готов к проверке.`,
+      })
     } catch (cause) {
       setMessage({
         kind: 'error',
@@ -123,7 +137,7 @@ export default function App() {
   }
 
   const handleExport = async (format: ExportFormat) => {
-    const value = screen === 'review' ? resultText : text
+    const value = isReviewRoute ? resultText : text
     const baseName = fileName ? fileName.replace(/\.(txt|docx)$/i, '') : 'normal-text-result'
     setExportOpen(false)
 
@@ -131,17 +145,34 @@ export default function App() {
       await exportTextFile(value, baseName, format, {
         structure: documentStructure,
         sourceText: text,
-        changes: screen === 'review' ? changes : [],
+        changes: isReviewRoute ? changes : [],
       })
-      setMessage({ kind: 'success', title: 'Файл сохранён', message: `Результат экспортирован в формате ${format.toUpperCase()}.` })
+      setMessage({
+        kind: 'success',
+        title: 'Файл сохранён',
+        message: `Результат экспортирован в формате ${format.toUpperCase()}.`,
+      })
     } catch (cause) {
-      setMessage({ kind: 'error', title: 'Ошибка экспорта', message: cause instanceof Error ? cause.message : 'Не удалось сформировать файл.' })
+      setMessage({
+        kind: 'error',
+        title: 'Ошибка экспорта',
+        message: cause instanceof Error ? cause.message : 'Не удалось сформировать файл.',
+      })
     }
   }
 
   const startProcessing = () => {
     if (!text.trim()) {
       setError('Введите текст для проверки.')
+      return
+    }
+
+    if (activeRuleIds.length === 0) {
+      setMessage({
+        kind: 'error',
+        title: 'Нет активных правил',
+        message: 'Включите хотя бы одно правило в настройках перед запуском проверки.',
+      })
       return
     }
 
@@ -155,89 +186,128 @@ export default function App() {
         const found = analyzeTypography(text, language, mode, customRules[language])
         setChanges(found)
         setSelectedChangeId(null)
-        if (found.length) setScreen('review')
-        else setNoChangesOpen(true)
+
+        if (found.length) {
+          navigate('/review')
+        } else {
+          navigate('/')
+          setNoChangesOpen(true)
+        }
       } catch {
-        setMessage({ kind: 'error', title: 'Ошибка обработки', message: 'Не удалось выполнить проверку текста. Попробуйте ещё раз.' })
+        setMessage({
+          kind: 'error',
+          title: 'Ошибка обработки',
+          message: 'Не удалось выполнить проверку текста. Попробуйте ещё раз.',
+        })
       } finally {
         setIsProcessing(false)
       }
     }, 350)
   }
 
+  const editorElement = (
+    <EditorScreen
+      text={text}
+      language={language}
+      mode={mode}
+      activeRuleCount={activeRuleIds.length}
+      error={error}
+      isProcessing={isProcessing}
+      fileName={fileName}
+      sourceFormat={sourceFormat}
+      onTextChange={(value) => {
+        setText(value)
+        setDocumentStructure(null)
+        if (error) setError('')
+      }}
+      onLanguageChange={setLanguage}
+      onModeChange={setMode}
+      onOpenUpload={() => setUploadOpen(true)}
+      onOpenRules={() => navigate('/rules')}
+      onSubmit={(event) => {
+        event.preventDefault()
+        startProcessing()
+      }}
+    />
+  )
+
+  const rulesElement = (
+    <RulesScreen
+      language={language}
+      mode={mode}
+      customRuleIds={customRules[language]}
+      onBack={goToEditor}
+      onSave={(nextMode, ids) => {
+        setMode(nextMode)
+        setCustomRules((current) => ({ ...current, [language]: ids }))
+        navigate('/')
+        setMessage({
+          kind: 'success',
+          title: 'Настройки сохранены',
+          message: `Активно правил: ${getActiveRuleIds(language, nextMode, ids).length}.`,
+        })
+      }}
+    />
+  )
+
+  const reviewElement = text.trim() && changes.length ? (
+    <ReviewScreen
+      source={text}
+      changes={changes}
+      selectedChangeId={selectedChangeId}
+      statusMessage={statusMessage}
+      onBack={goToEditor}
+      onSelectChange={(id) => setSelectedChangeId((current) => current === id ? null : id)}
+      onDecision={(id, decision) => {
+        setStatusMessage('')
+        setChanges((current) =>
+          current.map((change) => change.id === id ? { ...change, decision } : change),
+        )
+      }}
+      onApplyAll={() => {
+        setChanges((current) => current.map((change) => ({ ...change, decision: 'accepted' })))
+        setStatusMessage('Все изменения приняты.')
+      }}
+      onRejectAll={() => {
+        setChanges((current) => current.map((change) => ({ ...change, decision: 'rejected' })))
+        setStatusMessage('Все изменения отклонены.')
+      }}
+      onCopy={() => void copyText(resultText)}
+      onExport={() => setExportOpen(true)}
+    />
+  ) : (
+    <Navigate to="/" replace />
+  )
+
   return (
     <div className="app-shell">
       <header className="site-header">
         <div className="site-header__inner">
-          <button className="brand-button" type="button" onClick={goToEditor} aria-label="Вернуться на главную">Нормальный Текст</button>
+          <button className="brand-button" type="button" onClick={goToEditor} aria-label="Вернуться на главную">
+            Нормальный Текст
+          </button>
         </div>
       </header>
 
-      {screen === 'editor' && (
-        <EditorScreen
-          text={text}
-          language={language}
-          mode={mode}
-          activeRuleCount={activeRuleIds.length}
-          error={error}
-          isProcessing={isProcessing}
-          fileName={fileName}
-          sourceFormat={sourceFormat}
-          onTextChange={(value) => {
-            setText(value)
-            setDocumentStructure(null)
-            if (error) setError('')
-          }}
-          onLanguageChange={setLanguage}
-          onModeChange={setMode}
-          onOpenUpload={() => setUploadOpen(true)}
-          onOpenRules={() => setScreen('rules')}
-          onSubmit={(event) => { event.preventDefault(); startProcessing() }}
+      <Routes>
+        <Route path="/" element={editorElement} />
+        <Route path="/rules" element={rulesElement} />
+        <Route path="/review" element={reviewElement} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+
+      {uploadOpen && (
+        <UploadModal
+          onClose={() => setUploadOpen(false)}
+          onFileSelected={(file) => void handleImport(file)}
         />
       )}
-
-      {screen === 'rules' && (
-        <RulesScreen
-          language={language}
-          mode={mode}
-          customRuleIds={customRules[language]}
-          onBack={goToEditor}
-          onSave={(nextMode, ids) => {
-            setMode(nextMode)
-            setCustomRules((current) => ({ ...current, [language]: ids }))
-            setScreen('editor')
-            setMessage({ kind: 'success', title: 'Настройки сохранены', message: `Активно правил: ${getActiveRuleIds(language, nextMode, ids).length}.` })
-          }}
+      {exportOpen && (
+        <ExportModal
+          onClose={() => setExportOpen(false)}
+          onExport={(format) => void handleExport(format)}
         />
       )}
-
-      {screen === 'review' && (
-        <ReviewScreen
-          source={text}
-          changes={changes}
-          selectedChangeId={selectedChangeId}
-          statusMessage={statusMessage}
-          onBack={goToEditor}
-          onSelectChange={(id) => setSelectedChangeId((current) => current === id ? null : id)}
-          onDecision={(id, decision) => {
-            setStatusMessage('')
-            setChanges((current) => current.map((change) => change.id === id ? { ...change, decision } : change))
-          }}
-          onApplyAll={() => {
-            setChanges((current) => current.map((change) => ({ ...change, decision: 'accepted' })))
-            setStatusMessage('Все изменения приняты.')
-          }}
-          onRejectAll={() => {
-            setChanges((current) => current.map((change) => ({ ...change, decision: 'rejected' })))
-            setStatusMessage('Все изменения отклонены.')
-          }}
-          onCopy={() => void copyText(resultText)}
-          onExport={() => setExportOpen(true)}
-        />
-      )}
-
-      {uploadOpen && <UploadModal onClose={() => setUploadOpen(false)} onFileSelected={(file) => void handleImport(file)} />}
-      {exportOpen && <ExportModal onClose={() => setExportOpen(false)} onExport={(format) => void handleExport(format)} />}
       {noChangesOpen && (
         <NoChangesModal
           statusMessage={statusMessage}
