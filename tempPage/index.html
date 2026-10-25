@@ -14,110 +14,96 @@
     <header class="site-header">
       <div class="site-header__inner">
         <p class="project-name">Нормальный Текст</p>
-        <p class="project-tagline">Типографическая нормализация без ИИ</p>
       </div>
     </header>
 
     <main class="page">
       <section class="editor" aria-labelledby="editor-title">
-        <div class="editor__intro">
-          <p class="eyebrow">Редактор</p>
-          <h1 id="editor-title">Приведите текст к типографическим нормам</h1>
-          <p class="editor__description">
-            Вставьте текст или загрузите TXT/DOCX, выберите параметры и запустите проверку.
-            Все найденные изменения можно будет проверить перед экспортом.
-          </p>
-        </div>
-
-        <form class="editor-form">
-          <section class="editor-panel" aria-labelledby="source-title">
-            <div class="panel-heading">
-              <div>
-                <p class="panel-kicker">Шаг 1</p>
-                <h2 id="source-title">Исходный текст</h2>
-              </div>
-              <span class="file-support">TXT · DOCX</span>
+        <div class="editor-layout">
+          <div class="editor-main">
+            <div class="editor-intro">
+              <h1 id="editor-title">
+                <span class="desktop-copy">Типографическая проверка текста</span>
+                <span class="mobile-copy">Проверка текста</span>
+              </h1>
+              <p class="editor-description">
+                <span class="desktop-copy">Вставьте текст или загрузите TXT/DOCX. Сервис найдёт типографические нарушения по активным правилам.</span>
+                <span class="mobile-copy">Вставьте текст или загрузите документ.</span>
+              </p>
             </div>
 
-            <label class="field-label" for="source-text">Текст для обработки</label>
-            <textarea
-              id="source-text"
-              name="sourceText"
-              rows="16"
-              placeholder="Введите или вставьте текст"
-            ></textarea>
+            <form class="editor-form">
+              <section class="editor-panel" aria-labelledby="source-title">
+                <label class="textarea-label" id="source-title" for="source-text">Исходный текст</label>
+                <textarea
+                  id="source-text"
+                  name="sourceText"
+                  rows="16"
+                  aria-labelledby="source-title"
+                >В современном тексте часто встречаются неправильные «кавычки», дефисы вместо тире, 15 кг и другие конструкции...</textarea>
+              </section>
 
-            <label class="field-label" for="source-file">Загрузить файл TXT или DOCX</label>
-            <input
-              id="source-file"
-              name="sourceFile"
-              type="file"
-              accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            />
-            <p class="field-hint">Файл обрабатывается локально в браузере.</p>
-          </section>
+              <div class="upload-row">
+                <label class="file-button" for="source-file">Загрузить TXT/DOCX</label>
+                <input
+                  class="visually-hidden"
+                  id="source-file"
+                  name="sourceFile"
+                  type="file"
+                  accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                />
+                <span class="file-support">Поддерживаются .txt и .docx</span>
+              </div>
+            </form>
+          </div>
 
           <aside class="settings-panel" aria-labelledby="settings-title">
-            <div class="panel-heading">
-              <div>
-                <p class="panel-kicker">Шаг 2</p>
-                <h2 id="settings-title">Параметры</h2>
+            <h2 id="settings-title">Параметры</h2>
+
+            <div class="field-group field-group--language">
+              <label for="language">Язык</label>
+              <div class="select-wrap">
+                <select id="language" name="language">
+                  <option value="ru">Русский</option>
+                  <option value="en">English</option>
+                </select>
+                <span class="select-arrow" aria-hidden="true">∨</span>
               </div>
             </div>
 
-            <fieldset class="settings-group">
-              <legend>Язык правил</legend>
-              <div class="radio-group">
-                <label class="radio-option">
-                  <input type="radio" name="language" value="ru" checked />
-                  <span>Русский</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="language" value="en" />
-                  <span>English</span>
-                </label>
+            <div class="field-group field-group--mode">
+              <label for="mode">
+                <span class="desktop-copy">Режим обработки</span>
+                <span class="mobile-copy">Режим</span>
+              </label>
+              <div class="select-wrap">
+                <select id="mode" name="mode">
+                  <option value="full">Полный / ГОСТ</option>
+                  <option value="basic">Базовый</option>
+                  <option value="custom">Пользовательский</option>
+                </select>
+                <span class="select-arrow" aria-hidden="true">∨</span>
               </div>
-            </fieldset>
-
-            <div class="settings-group">
-              <label class="field-label" for="mode">Режим обработки</label>
-              <select id="mode" name="mode">
-                <option value="basic">Базовый</option>
-                <option value="extended">Расширенный</option>
-                <option value="custom">Пользовательский</option>
-              </select>
             </div>
 
-            <div class="rules-summary" aria-label="Сводка активных правил">
-              <span>Активно правил</span>
-              <strong>24</strong>
-            </div>
+            <p class="rules-count">Активно правил: 24</p>
 
             <div class="settings-actions">
               <button class="button button--secondary" type="button">Настроить правила</button>
               <button class="button button--primary" type="submit">Проверить текст</button>
             </div>
           </aside>
-        </form>
+        </div>
       </section>
 
-      <section class="service-note" aria-labelledby="service-note-title">
-        <div>
-          <p class="eyebrow">Как это работает</p>
-          <h2 id="service-note-title">Контроль остаётся у пользователя</h2>
-        </div>
-        <p>
-          Сервис применяет только выбранные формализованные правила. После обработки каждое
-          изменение показывается в формате «было / стало» и может быть принято или отклонено.
-        </p>
+      <section class="supplementary-note" aria-labelledby="structure-note">
+        <h2 id="structure-note">О сервисе</h2>
+        <p>Сервис применяет выбранные типографические правила и показывает изменения перед экспортом.</p>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="site-footer__inner">
-        <p>Учебный проект «Нормальный Текст»</p>
-        <p>TXT · DOCX · RU · EN</p>
-      </div>
+      <p>Учебный проект «Нормальный Текст»</p>
     </footer>
   </body>
 </html>
