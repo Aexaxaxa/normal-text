@@ -11,8 +11,8 @@ import {
 test('Russian and English full presets are materially different', () => {
   const ru = getRuleDefinitions('ru')
   const en = getRuleDefinitions('en')
-  assert.ok(ru.length >= 35, \`RU rules: ${ru.length}\`)
-  assert.ok(en.length >= 20, \`EN rules: ${en.length}\`)
+  assert.ok(ru.length >= 35, `RU rules: ${ru.length}`)
+  assert.ok(en.length >= 20, `EN rules: ${en.length}`)
   assert.notEqual(getActiveRuleCount('full', 'ru'), getActiveRuleCount('full', 'en'))
   assert.ok(ru.some((rule) => rule.id === 'phone-format'))
   assert.ok(!en.some((rule) => rule.id === 'phone-format'))
