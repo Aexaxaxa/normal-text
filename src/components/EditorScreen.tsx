@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react'
+import type { SourceFormat } from '../lib/files'
 
 export type Language = 'ru' | 'en'
 export type ProcessingMode = 'full' | 'basic'
@@ -9,9 +10,12 @@ type EditorScreenProps = {
   mode: ProcessingMode
   error: string
   isProcessing: boolean
+  fileName: string
+  sourceFormat: SourceFormat | null
   onTextChange: (value: string) => void
   onLanguageChange: (value: Language) => void
   onModeChange: (value: ProcessingMode) => void
+  onOpenUpload: () => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
 }
 
@@ -21,9 +25,12 @@ export function EditorScreen({
   mode,
   error,
   isProcessing,
+  fileName,
+  sourceFormat,
   onTextChange,
   onLanguageChange,
   onModeChange,
+  onOpenUpload,
   onSubmit,
 }: EditorScreenProps) {
   return (
@@ -38,9 +45,9 @@ export function EditorScreen({
               </h1>
               <p className="editor-description">
                 <span className="desktop-copy">
-                  Вставьте текст. Сервис найдёт типографические нарушения по активным правилам.
+                  Вставьте текст или загрузите TXT/DOCX. Сервис найдёт типографические нарушения по активным правилам.
                 </span>
-                <span className="mobile-copy">Вставьте текст для типографической проверки.</span>
+                <span className="mobile-copy">Вставьте текст или загрузите документ.</span>
               </p>
             </div>
 
@@ -67,9 +74,14 @@ export function EditorScreen({
               </section>
 
               <div className="upload-row">
-                <button className="file-button" type="button" disabled title="Импорт TXT/DOCX не входит в первую версию MVP">
+                <button className="file-button" type="button" onClick={onOpenUpload}>
                   Загрузить TXT/DOCX
                 </button>
+                {fileName && (
+                  <span className="file-meta" title={fileName}>
+                    {fileName} · {sourceFormat?.toUpperCase()}
+                  </span>
+                )}
               </div>
             </form>
           </div>
@@ -117,7 +129,7 @@ export function EditorScreen({
             </div>
 
             <div className="settings-actions">
-              <button className="button button--secondary" type="button" disabled title="Тонкая настройка правил не входит в первую версию MVP">
+              <button className="button button--secondary" type="button">
                 Настроить правила
               </button>
               <button className="button button--primary" type="submit" form="editor-form" disabled={isProcessing}>

@@ -10,6 +10,7 @@ type ReviewScreenProps = {
   onApplyAll: () => void
   onSelectChange: (id: string) => void
   onCopy: () => void
+  onExport: () => void
   onBack: () => void
 }
 
@@ -68,6 +69,7 @@ export function ReviewScreen({
   onApplyAll,
   onSelectChange,
   onCopy,
+  onExport,
   onBack,
 }: ReviewScreenProps) {
   const [compareMode, setCompareMode] = useState(false)
@@ -182,7 +184,7 @@ export function ReviewScreen({
             <div className="review-actions">
               <button className="button button--primary" type="button" onClick={onApplyAll}>Применить все</button>
               <button className="button button--secondary" type="button" onClick={onCopy}>Копировать текст</button>
-              <button className="button button--secondary" type="button" disabled title="Экспорт файлов не входит в первую версию MVP">Экспортировать</button>
+              <button className="button button--secondary" type="button" onClick={onExport}>Экспортировать</button>
             </div>
             <p className="copy-status" aria-live="polite">{statusMessage}</p>
           </div>
