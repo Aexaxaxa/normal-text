@@ -16,30 +16,32 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [changes, setChanges] = useState<TypographyChange[]>([])
   const [selectedChangeId, setSelectedChangeId] = useState<string | null>(null)
-  const [copyStatus, setCopyStatus] = useState('')
+  const [statusMessage, setStatusMessage] = useState('')
 
   const resultText = useMemo(() => buildResultText(text, changes), [text, changes])
 
   const copyText = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value)
-      setCopyStatus('Текст скопирован.')
+      setStatusMessage('Текст скопирован.')
     } catch {
-      setCopyStatus('Не удалось скопировать текст. Скопируйте его вручную.')
+      setStatusMessage('Не удалось скопировать текст. Скопируйте его вручную.')
     }
   }
 
   const goToEditor = () => {
     setScreen('editor')
     setSelectedChangeId(null)
-    setCopyStatus('')
+    setStatusMessage('')
   }
 
   return (
     <div className="app-shell">
       <header className="site-header">
         <div className="site-header__inner">
-          <p className="project-name">Нормальный Текст</p>
+          <button className="brand-button" type="button" onClick={goToEditor} aria-label="Вернуться на главную">
+            Нормальный Текст
+          </button>
         </div>
       </header>
 
@@ -64,7 +66,7 @@ export default function App() {
             }
 
             setError('')
-            setCopyStatus('')
+            setStatusMessage('')
             setIsProcessing(true)
             window.setTimeout(() => {
               const found = analyzeTypography(text, language, mode)
@@ -82,14 +84,16 @@ export default function App() {
           source={text}
           changes={changes}
           selectedChangeId={selectedChangeId}
-          copyStatus={copyStatus}
+          statusMessage={statusMessage}
           onBack={goToEditor}
           onSelectChange={(id) => setSelectedChangeId((current) => current === id ? null : id)}
           onDecision={(id, decision) => {
+            setStatusMessage('')
             setChanges((current) => current.map((change) => change.id === id ? { ...change, decision } : change))
           }}
           onApplyAll={() => {
             setChanges((current) => current.map((change) => ({ ...change, decision: 'accepted' })))
+            setStatusMessage('Все изменения приняты.')
           }}
           onCopy={() => void copyText(resultText)}
         />
@@ -97,7 +101,7 @@ export default function App() {
 
       {screen === 'no-changes' && (
         <NoChangesScreen
-          copyStatus={copyStatus}
+          copyStatus={statusMessage}
           onBack={goToEditor}
           onCopy={() => void copyText(text)}
         />

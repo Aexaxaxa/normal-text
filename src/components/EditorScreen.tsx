@@ -27,7 +27,7 @@ export function EditorScreen({
   onSubmit,
 }: EditorScreenProps) {
   return (
-    <main className="page">
+    <main className="page editor-page">
       <section className="editor" aria-labelledby="editor-title">
         <div className="editor-layout">
           <div className="editor-main">
@@ -70,7 +70,6 @@ export function EditorScreen({
                 <button className="file-button" type="button" disabled title="Импорт TXT/DOCX не входит в первую версию MVP">
                   Загрузить TXT/DOCX
                 </button>
-                <span className="file-support">Будет добавлено после первой версии MVP</span>
               </div>
             </form>
           </div>
@@ -78,42 +77,44 @@ export function EditorScreen({
           <aside className="settings-panel" aria-labelledby="settings-title">
             <h2 id="settings-title">Параметры</h2>
 
-            <div className="field-group field-group--language">
-              <label htmlFor="language">Язык</label>
-              <div className="select-wrap">
-                <select
-                  id="language"
-                  name="language"
-                  value={language}
-                  onChange={(event) => onLanguageChange(event.target.value as Language)}
-                >
-                  <option value="ru">Русский</option>
-                  <option value="en">English</option>
-                </select>
-                <span className="select-arrow" aria-hidden="true">∨</span>
+            <div className="settings-scroll">
+              <div className="field-group field-group--language">
+                <label htmlFor="language">Язык</label>
+                <div className="select-wrap">
+                  <select
+                    id="language"
+                    name="language"
+                    value={language}
+                    onChange={(event) => onLanguageChange(event.target.value as Language)}
+                  >
+                    <option value="ru">Русский</option>
+                    <option value="en">English</option>
+                  </select>
+                  <span className="select-arrow" aria-hidden="true">∨</span>
+                </div>
               </div>
-            </div>
 
-            <div className="field-group field-group--mode">
-              <label htmlFor="mode">
-                <span className="desktop-copy">Режим обработки</span>
-                <span className="mobile-copy">Режим</span>
-              </label>
-              <div className="select-wrap">
-                <select
-                  id="mode"
-                  name="mode"
-                  value={mode}
-                  onChange={(event) => onModeChange(event.target.value as ProcessingMode)}
-                >
-                  <option value="full">Полный / ГОСТ</option>
-                  <option value="basic">Базовый</option>
-                </select>
-                <span className="select-arrow" aria-hidden="true">∨</span>
+              <div className="field-group field-group--mode">
+                <label htmlFor="mode">
+                  <span className="desktop-copy">Режим обработки</span>
+                  <span className="mobile-copy">Режим</span>
+                </label>
+                <div className="select-wrap">
+                  <select
+                    id="mode"
+                    name="mode"
+                    value={mode}
+                    onChange={(event) => onModeChange(event.target.value as ProcessingMode)}
+                  >
+                    <option value="full">Полный / ГОСТ</option>
+                    <option value="basic">Базовый</option>
+                  </select>
+                  <span className="select-arrow" aria-hidden="true">∨</span>
+                </div>
               </div>
-            </div>
 
-            <p className="rules-count">Активно правил: {mode === 'full' ? 7 : 4}</p>
+              <p className="rules-count">Активно правил: {mode === 'full' ? 7 : 4}</p>
+            </div>
 
             <div className="settings-actions">
               <button className="button button--secondary" type="button" disabled title="Тонкая настройка правил не входит в первую версию MVP">

@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { TypographyChange } from '../lib/typography'
 
 type ReviewScreenProps = {
   source: string
   changes: TypographyChange[]
   selectedChangeId: string | null
-  copyStatus: string
+  statusMessage: string
   onDecision: (id: string, decision: 'accepted' | 'rejected') => void
   onApplyAll: () => void
   onSelectChange: (id: string) => void
@@ -37,13 +37,14 @@ export function ReviewScreen({
   source,
   changes,
   selectedChangeId,
-  copyStatus,
+  statusMessage,
   onDecision,
   onApplyAll,
   onSelectChange,
   onCopy,
   onBack,
 }: ReviewScreenProps) {
+  const [compareMode, setCompareMode] = useState(false)
   const accepted = changes.filter((change) => change.decision === 'accepted').length
   const rejected = changes.filter((change) => change.decision === 'rejected').length
 
@@ -51,25 +52,58 @@ export function ReviewScreen({
     <main className="page review-page">
       <div className="review-layout">
         <section className="review-result" aria-labelledby="result-title">
-          <div className="review-title-row">
+          <div className="review-heading-row">
             <h1 className="review-heading" id="result-title">Результат</h1>
-            <button className="text-button" type="button" onClick={onBack}>Вернуться к редактированию</button>
+            <button className="back-button" type="button" onClick={onBack}>
+              <span aria-hidden="true">←</span>
+              Вернуться к редактированию
+            </button>
           </div>
 
-          <div className="stats-row" aria-label="Статистика изменений">
-            <div className="stat-chip"><span>Найдено</span><strong>{changes.length}</strong></div>
-            <div className="stat-chip"><span>Принято</span><strong>{accepted}</strong></div>
-            <div className="stat-chip"><span>Отклонено</span><strong>{rejected}</strong></div>
+          <div className="stats-toolbar">
+            <div className="stats-row" aria-label="Статистика изменений">
+              <div className="stat-chip"><span>Найдено</span><strong>{changes.length}</strong></div>
+              <div className="stat-chip"><span>Принято</span><strong>{accepted}</strong></div>
+              <div className="stat-chip"><span>Отклонено</span><strong>{rejected}</strong></div>
+            </div>
+            <button
+              className={`compare-button${compareMode ? ' compare-button--active' : ''}`}
+              type="button"
+              aria-pressed={compareMode}
+              onClick={() => setCompareMode((value) => !value)}
+            >
+              {compareMode ? 'Один результат' : 'Сравнить тексты'}
+            </button>
           </div>
 
-          <section className="result-card" aria-labelledby="processed-text-title">
-            <h2 id="processed-text-title">Обработанный текст</h2>
-            <p className="result-text"><ResultText source={source} changes={changes} selectedChangeId={selectedChangeId} /></p>
+          <section className={`result-card${compareMode ? ' result-card--compare' : ''}`} aria-labelledby="processed-text-title">
+            {compareMode ? (
+              <div className="comparison-grid">
+                <div className="comparison-pane">
+                  <h2>Исходный текст</h2>
+                  <p className="result-text">{source}</p>
+                </div>
+                <div className="comparison-pane comparison-pane--result">
+                  <h2 id="processed-text-title">Результат</h2>
+                  <p className="result-text">
+                    <ResultText source={source} changes={changes} selectedChangeId={selectedChangeId} />
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 id="processed-text-title">Обработанный текст</h2>
+                <p className="result-text">
+                  <ResultText source={source} changes={changes} selectedChangeId={selectedChangeId} />
+                </p>
+              </>
+            )}
           </section>
         </section>
 
         <section className="changes-panel" aria-labelledby="changes-title">
           <h2 id="changes-title">Найденные изменения</h2>
+
           <div className="change-list">
             {changes.map((change) => (
               <article className={`change-card${selectedChangeId === change.id ? ' change-card--selected' : ''}`} key={change.id}>
@@ -116,12 +150,14 @@ export function ReviewScreen({
             ))}
           </div>
 
-          <div className="review-actions">
-            <button className="button button--primary" type="button" onClick={onApplyAll}>Применить все</button>
-            <button className="button button--secondary" type="button" onClick={onCopy}>Копировать текст</button>
-            <button className="button button--secondary" type="button" disabled title="Экспорт файлов не входит в первую версию MVP">Экспортировать</button>
+          <div className="review-footer">
+            <div className="review-actions">
+              <button className="button button--primary" type="button" onClick={onApplyAll}>Применить все</button>
+              <button className="button button--secondary" type="button" onClick={onCopy}>Копировать текст</button>
+              <button className="button button--secondary" type="button" disabled title="Экспорт файлов не входит в первую версию MVP">Экспортировать</button>
+            </div>
+            <p className="copy-status" aria-live="polite">{statusMessage}</p>
           </div>
-          <p className="copy-status" aria-live="polite">{copyStatus}</p>
         </section>
       </div>
     </main>
