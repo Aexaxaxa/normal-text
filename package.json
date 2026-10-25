@@ -18,7 +18,8 @@
     "mammoth": "^1.13.0",
     "docx": "^9.14.0",
     "dompurify": "^3.4.17",
-    "react-router-dom": "^7.18.4"
+    "react-router-dom": "^7.18.4",
+    "@tabler/icons-react": "^3.49.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

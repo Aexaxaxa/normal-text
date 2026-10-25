@@ -1550,3 +1550,252 @@ select {
     grid-column: auto;
   }
 }
+
+
+/* Final UX refinements */
+.button,
+.file-button,
+.back-button,
+.compare-button,
+.rules-back {
+  gap: 7px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.upload-row {
+  gap: 14px;
+}
+
+.review-layout {
+  grid-template-columns: minmax(0, 1.16fr) minmax(570px, .94fr);
+  gap: 28px;
+}
+
+.changes-panel {
+  grid-template-rows: 44px minmax(0, 1fr) auto;
+}
+
+.changes-heading-row {
+  gap: 10px;
+}
+
+.changes-heading-row h2 {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 26px;
+}
+
+.change-filter {
+  position: relative;
+  display: flex;
+  width: 148px;
+  flex: 0 0 148px;
+  align-items: center;
+}
+
+.change-filter > svg {
+  position: absolute;
+  z-index: 1;
+  left: 9px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.change-filter select {
+  width: 100%;
+  height: 34px;
+  padding: 0 27px 0 29px;
+  border-radius: 9px;
+  font-size: 11.5px;
+}
+
+.review-actions--full {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.review-actions--full .button {
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 7px;
+  gap: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.review-actions--full .button svg {
+  flex: 0 0 auto;
+}
+
+.change-card {
+  padding: 12px;
+}
+
+.change-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.change-comparison .change-example {
+  min-width: 0;
+  margin-top: 0;
+}
+
+.change-example > span {
+  margin-bottom: 3px;
+}
+
+.change-example p {
+  min-height: 38px;
+  padding: 8px 9px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.nbsp-hint {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+.change-actions {
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.change-action {
+  min-width: 0;
+  min-height: 40px;
+  padding-inline: 8px;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.back-button {
+  min-width: 90px;
+}
+
+.compare-button {
+  gap: 6px;
+}
+
+.file-meta {
+  margin-left: 2px;
+}
+
+.rules-back {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nbsp-legend {
+  margin-top: 10px !important;
+  font-size: 12px;
+}
+
+.toggle-switch--mixed {
+  background: #8ebaf5;
+}
+
+.toggle-switch--mixed span {
+  transform: translateX(10px);
+}
+
+.toggle-switch--mixed::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 18px;
+  width: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.modal-close {
+  display: grid;
+  place-items: center;
+}
+
+.success-icon,
+.message-icon {
+  font-size: 0;
+}
+
+.upload-dropzone > svg,
+.export-option > svg {
+  color: var(--accent);
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .review-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(500px, .96fr);
+    gap: 22px;
+  }
+
+  .changes-heading-row h2 {
+    font-size: 23px;
+  }
+
+  .change-filter {
+    width: 132px;
+    flex-basis: 132px;
+  }
+
+  .review-actions--full .button {
+    padding-inline: 5px;
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .change-filter {
+    width: 146px;
+    flex-basis: 146px;
+  }
+
+  .change-comparison {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .review-actions--full {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .changes-heading-row {
+    align-items: flex-start;
+  }
+
+  .changes-heading-row h2 {
+    font-size: 23px;
+    white-space: normal;
+  }
+
+  .change-filter {
+    width: 120px;
+    flex-basis: 120px;
+  }
+
+  .change-comparison {
+    grid-template-columns: 1fr;
+  }
+}

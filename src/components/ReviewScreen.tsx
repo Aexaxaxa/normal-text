@@ -1,3 +1,13 @@
+import {
+  IconArrowLeft,
+  IconArrowsDiff,
+  IconCheck,
+  IconCopy,
+  IconDownload,
+  IconEye,
+  IconFilter,
+  IconX,
+} from '@tabler/icons-react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { TypographyChange } from '../lib/typography'
 
@@ -13,6 +23,11 @@ type ReviewScreenProps = {
   onCopy: () => void
   onExport: () => void
   onBack: () => void
+}
+
+function visibleFragment(value: string, fallback: string) {
+  if (!value) return fallback
+  return value.replace(/\u00a0/g, '⍽').replace(/\t/g, '⇥')
 }
 
 function HighlightMarker() {
@@ -46,6 +61,7 @@ function ResultText({ source, changes, selectedChangeId }: Pick<ReviewScreenProp
   sorted.forEach((change) => {
     if (change.start > cursor) parts.push(source.slice(cursor, change.start))
     const value = change.decision === 'rejected' ? source.slice(change.start, change.end) : change.after
+
     if (selectedChangeId === change.id) {
       parts.push(value
         ? <mark key={change.id} className="result-highlight" data-selected-highlight="true">{value}</mark>
@@ -104,7 +120,10 @@ export function ReviewScreen({
         <section className="review-result" aria-labelledby="result-title">
           <div className="review-heading-row">
             <h1 className="review-heading" id="result-title">Результат</h1>
-            <button className="back-button" type="button" onClick={onBack}><span aria-hidden="true">←</span>Вернуться к редактированию</button>
+            <button className="back-button" type="button" onClick={onBack}>
+              <IconArrowLeft size={17} stroke={1.8} aria-hidden="true" />
+              Назад
+            </button>
           </div>
 
           <div className="stats-toolbar">
@@ -114,16 +133,17 @@ export function ReviewScreen({
               <div className="stat-chip"><span>Отклонено</span><strong>{rejected}</strong></div>
             </div>
             <button
-              className={`compare-button${compareMode ? ' compare-button--active' : ''}`}
+              className={\`compare-button${compareMode ? ' compare-button--active' : ''}\`}
               type="button"
               aria-pressed={compareMode}
               onClick={() => setCompareMode((value) => !value)}
             >
+              <IconArrowsDiff size={17} stroke={1.8} aria-hidden="true" />
               {compareMode ? 'Один результат' : 'Сравнить тексты'}
             </button>
           </div>
 
-          <section className={`result-card${compareMode ? ' result-card--compare' : ''}`} aria-labelledby="processed-text-title">
+          <section className={\`result-card${compareMode ? ' result-card--compare' : ''}\`} aria-labelledby="processed-text-title">
             {compareMode ? (
               <div className="comparison-grid">
                 <div className="comparison-pane">
@@ -148,9 +168,10 @@ export function ReviewScreen({
           <div className="changes-heading-row">
             <h2 id="changes-title">Найденные изменения</h2>
             <label className="change-filter">
+              <IconFilter size={15} stroke={1.8} aria-hidden="true" />
               <span className="visually-hidden">Фильтр изменений</span>
               <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
-                <option value="all">Все категории ({changes.length})</option>
+                <option value="all">Все ({changes.length})</option>
                 {categoryCounts.map(([category, count]) => (
                   <option value={category} key={category}>{category} ({count})</option>
                 ))}
@@ -160,21 +181,40 @@ export function ReviewScreen({
 
           <div className="change-list">
             {visibleChanges.map((change) => (
-              <article className={`change-card${selectedChangeId === change.id ? ' change-card--selected' : ''}`} key={change.id}>
+              <article className={\`change-card${selectedChangeId === change.id ? ' change-card--selected' : ''}\`} key={change.id}>
                 <div className="change-card__heading">
-                  <h3>{change.ruleName}</h3>
+                  <div>
+                    <h3>{change.ruleName}</h3>
+                    {change.after.includes('\u00a0') && <span className="nbsp-hint">⍽ — неразрывный пробел</span>}
+                  </div>
                   {change.decision !== 'pending' && (
-                    <span className={`decision-badge decision-badge--${change.decision}`}>
+                    <span className={\`decision-badge decision-badge--${change.decision}\`}>
                       {change.decision === 'accepted' ? 'Принято' : 'Отклонено'}
                     </span>
                   )}
                 </div>
-                <div className="change-example change-example--before"><span>Было</span><p>{change.before || 'Пробел отсутствует'}</p></div>
-                <div className="change-example change-example--after"><span>Стало</span><p>{change.after || 'Удалить пробел'}</p></div>
+
+                <div className="change-comparison">
+                  <div className="change-example change-example--before">
+                    <span>Было</span>
+                    <p>{visibleFragment(change.before, '∅')}</p>
+                  </div>
+                  <div className="change-example change-example--after">
+                    <span>Стало</span>
+                    <p>{visibleFragment(change.after, '∅')}</p>
+                  </div>
+                </div>
+
                 <div className="change-actions">
-                  <button className="button button--primary change-action" type="button" aria-pressed={change.decision === 'accepted'} onClick={() => onDecision(change.id, 'accepted')}>Принять</button>
-                  <button className="button button--secondary change-action" type="button" aria-pressed={change.decision === 'rejected'} onClick={() => onDecision(change.id, 'rejected')}>Отклонить</button>
-                  <button className="button button--outline change-action change-action--view" type="button" onClick={() => onSelectChange(change.id)}>Посмотреть в тексте</button>
+                  <button className="button button--primary change-action" type="button" aria-pressed={change.decision === 'accepted'} onClick={() => onDecision(change.id, 'accepted')}>
+                    <IconCheck size={16} stroke={1.9} aria-hidden="true" />Принять
+                  </button>
+                  <button className="button button--secondary change-action" type="button" aria-pressed={change.decision === 'rejected'} onClick={() => onDecision(change.id, 'rejected')}>
+                    <IconX size={16} stroke={1.9} aria-hidden="true" />Отклонить
+                  </button>
+                  <button className="button button--outline change-action change-action--view" type="button" onClick={() => onSelectChange(change.id)}>
+                    <IconEye size={16} stroke={1.8} aria-hidden="true" />Посмотреть
+                  </button>
                 </div>
               </article>
             ))}
@@ -182,10 +222,18 @@ export function ReviewScreen({
 
           <div className="review-footer">
             <div className="review-actions review-actions--full">
-              <button className="button button--primary" type="button" onClick={onApplyAll}>Принять все</button>
-              <button className="button button--secondary" type="button" onClick={onRejectAll}>Отклонить все</button>
-              <button className="button button--secondary" type="button" onClick={onCopy}>Копировать</button>
-              <button className="button button--secondary" type="button" onClick={onExport}>Экспортировать</button>
+              <button className="button button--primary" type="button" onClick={onApplyAll}>
+                <IconCheck size={16} stroke={1.9} aria-hidden="true" />Принять все
+              </button>
+              <button className="button button--secondary" type="button" onClick={onRejectAll}>
+                <IconX size={16} stroke={1.9} aria-hidden="true" />Отклонить все
+              </button>
+              <button className="button button--secondary" type="button" onClick={onCopy}>
+                <IconCopy size={16} stroke={1.8} aria-hidden="true" />Копировать
+              </button>
+              <button className="button button--secondary" type="button" onClick={onExport}>
+                <IconDownload size={16} stroke={1.8} aria-hidden="true" />Экспорт
+              </button>
             </div>
             <p className="copy-status" aria-live="polite">{statusMessage}</p>
           </div>

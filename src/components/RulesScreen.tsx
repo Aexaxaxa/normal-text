@@ -1,3 +1,4 @@
+import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
 import {
   getActiveRuleIds,
@@ -20,6 +21,7 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
   const initialIds = mode === 'custom'
     ? customRuleIds
     : getActiveRuleIds(language, mode, customRuleIds)
+
   const [draftMode, setDraftMode] = useState<TypographyMode>(mode)
   const [enabledIds, setEnabledIds] = useState<string[]>(initialIds)
 
@@ -56,10 +58,14 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
   return (
     <main className="page rules-page">
       <section className="rules-screen" aria-labelledby="rules-title">
-        <button className="rules-back" type="button" onClick={onBack}>← Назад</button>
+        <button className="rules-back" type="button" onClick={onBack}>
+          <IconArrowLeft size={17} stroke={1.8} aria-hidden="true" />Назад
+        </button>
+
         <div className="rules-heading">
           <h1 id="rules-title">Настройки правил</h1>
           <p>Включайте и отключайте отдельные правила. Категории помогают быстро управлять группами.</p>
+          <p className="nbsp-legend"><strong>⍽</strong> в примерах означает неразрывный пробел.</p>
         </div>
 
         <div className="rules-mode">
@@ -71,7 +77,7 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
               onChange={(event) => setPreset(event.target.value as TypographyMode)}
             >
               <option value="basic">Базовый</option>
-              <option value="full">Полный / ГОСТ</option>
+              <option value="full">Полный</option>
               <option value="custom">Пользовательский</option>
             </select>
             <span className="select-arrow" aria-hidden="true">∨</span>
@@ -83,8 +89,11 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
           {ruleCategories.map((category) => {
             const categoryRules = availableRules.filter((rule) => rule.categoryId === category.id)
             if (!categoryRules.length) return null
+
             const enabledCount = categoryRules.filter((rule) => enabledIds.includes(rule.id)).length
             const allEnabled = enabledCount === categoryRules.length
+            const someEnabled = enabledCount > 0 && !allEnabled
+            const switchState = allEnabled ? 'on' : someEnabled ? 'mixed' : 'off'
 
             return (
               <section className="rule-category" key={category.id}>
@@ -94,11 +103,11 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
                     <p>{category.description}</p>
                   </div>
                   <button
-                    className={`toggle-switch${allEnabled ? ' toggle-switch--on' : ''}`}
+                    className={\`toggle-switch toggle-switch--${switchState}\`}
                     type="button"
-                    role="switch"
-                    aria-checked={allEnabled}
-                    aria-label={`${allEnabled ? 'Выключить' : 'Включить'} категорию ${category.title}`}
+                    role="checkbox"
+                    aria-checked={someEnabled ? 'mixed' : allEnabled}
+                    aria-label={\`${allEnabled ? 'Выключить' : 'Включить'} все правила категории «${category.title}»\`}
                     onClick={() => toggleCategory(category.id)}
                   >
                     <span />
@@ -115,11 +124,11 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
                           <p>{rule.example}</p>
                         </div>
                         <button
-                          className={`toggle-switch toggle-switch--small${enabled ? ' toggle-switch--on' : ''}`}
+                          className={\`toggle-switch toggle-switch--small${enabled ? ' toggle-switch--on' : ''}\`}
                           type="button"
                           role="switch"
                           aria-checked={enabled}
-                          aria-label={`${enabled ? 'Выключить' : 'Включить'} правило ${rule.name}`}
+                          aria-label={\`${enabled ? 'Выключить' : 'Включить'} правило «${rule.name}»\`}
                           onClick={() => toggleRule(rule.id)}
                         >
                           <span />
@@ -135,9 +144,11 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
 
         <div className="rules-actions">
           <button className="button button--primary" type="button" onClick={() => onSave(draftMode, enabledIds)}>
-            Сохранить настройки
+            <IconDeviceFloppy size={17} stroke={1.8} aria-hidden="true" />Сохранить настройки
           </button>
-          <button className="button button--secondary" type="button" onClick={onBack}>Назад</button>
+          <button className="button button--secondary" type="button" onClick={onBack}>
+            <IconArrowLeft size={17} stroke={1.8} aria-hidden="true" />Назад
+          </button>
         </div>
       </section>
     </main>
