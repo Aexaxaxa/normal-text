@@ -1,4 +1,4 @@
-import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
+import { IconArrowLeft, IconChevronDown, IconDeviceFloppy } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
 import {
   getActiveRuleIds,
@@ -80,7 +80,7 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
               <option value="full">Полный</option>
               <option value="custom">Пользовательский</option>
             </select>
-            <span className="select-arrow" aria-hidden="true">∨</span>
+            <IconChevronDown className="select-arrow" size={16} stroke={1.9} aria-hidden="true" />
           </div>
           <span className="rules-active-count">Активно: {enabledIds.length}</span>
         </div>

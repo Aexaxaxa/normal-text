@@ -1799,3 +1799,54 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* LR7 pre-test UX corrections */
+.select-arrow {
+  width: 16px;
+  height: 16px;
+}
+
+.change-filter__chevron {
+  position: absolute;
+  right: 8px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.change-comparison {
+  gap: 14px;
+}
+
+.change-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.change-action,
+.change-action--view {
+  width: 100%;
+  grid-column: auto;
+}
+
+.no-changes-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.no-changes-actions .button {
+  width: 100%;
+  min-width: 0;
+  padding-inline: 14px;
+}
+
+@media (max-width: 520px) {
+  .change-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .no-changes-actions {
+    grid-template-columns: 1fr;
+  }
+}

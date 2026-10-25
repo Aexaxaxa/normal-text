@@ -1,4 +1,4 @@
-import { IconCheck, IconSettings, IconUpload } from '@tabler/icons-react'
+import { IconCheck, IconChevronDown, IconSettings, IconUpload } from '@tabler/icons-react'
 import type { FormEvent } from 'react'
 import type { SourceFormat } from '../lib/files'
 import type { TypographyLanguage, TypographyMode } from '../lib/typography'
@@ -89,7 +89,7 @@ export function EditorScreen({
                     <option value="ru">Русский</option>
                     <option value="en">English</option>
                   </select>
-                  <span className="select-arrow" aria-hidden="true">∨</span>
+                  <IconChevronDown className="select-arrow" size={16} stroke={1.9} aria-hidden="true" />
                 </div>
               </div>
 
@@ -101,7 +101,7 @@ export function EditorScreen({
                     <option value="basic">Базовый</option>
                     <option value="custom">Пользовательский</option>
                   </select>
-                  <span className="select-arrow" aria-hidden="true">∨</span>
+                  <IconChevronDown className="select-arrow" size={16} stroke={1.9} aria-hidden="true" />
                 </div>
               </div>
 

@@ -2,6 +2,7 @@ import {
   IconArrowLeft,
   IconArrowsDiff,
   IconCheck,
+  IconChevronDown,
   IconCopy,
   IconDownload,
   IconEye,
@@ -176,6 +177,7 @@ export function ReviewScreen({
                   <option value={category} key={category}>{category} ({count})</option>
                 ))}
               </select>
+              <IconChevronDown className="change-filter__chevron" size={14} stroke={1.9} aria-hidden="true" />
             </label>
           </div>
 
