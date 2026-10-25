@@ -1498,3 +1498,55 @@ select {
     min-width: 0;
   }
 }
+
+
+/* Review filters and full action set */
+.changes-heading-row {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.changes-heading-row h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.change-filter {
+  width: min(210px, 48%);
+}
+
+.change-filter select {
+  height: 38px;
+  padding-left: 10px;
+  font-size: 12px;
+}
+
+.review-actions--full {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1023px) {
+  .changes-heading-row {
+    align-items: flex-end;
+  }
+
+  .changes-heading-row h2 {
+    font-size: 26px;
+  }
+
+  .change-filter {
+    width: min(180px, 52%);
+  }
+
+  .review-actions--full {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .review-actions--full .button:last-child {
+    grid-column: auto;
+  }
+}

@@ -4,7 +4,7 @@ import { ExportModal, MessageModal, NoChangesModal, UploadModal } from './compon
 import { ProcessingModal } from './components/ProcessingModal'
 import { ReviewScreen } from './components/ReviewScreen'
 import { RulesScreen } from './components/RulesScreen'
-import { exportTextFile, readSourceFile, type ExportFormat, type SourceFormat } from './lib/files'
+import { exportTextFile, readSourceFile, type DocumentStructure, type ExportFormat, type SourceFormat } from './lib/files'
 import {
   analyzeTypography,
   buildResultText,
@@ -65,6 +65,7 @@ export default function App() {
   const [message, setMessage] = useState<MessageState>(null)
   const [fileName, setFileName] = useState('')
   const [sourceFormat, setSourceFormat] = useState<SourceFormat | null>(null)
+  const [documentStructure, setDocumentStructure] = useState<DocumentStructure | null>(null)
 
   const activeRuleIds = useMemo(
     () => getActiveRuleIds(language, mode, customRules[language]),
@@ -105,6 +106,7 @@ export default function App() {
       setText(imported.text)
       setFileName(imported.fileName)
       setSourceFormat(imported.format)
+      setDocumentStructure(imported.structure)
       setError('')
       setScreen('editor')
       setMessage({ kind: 'success', title: 'Файл загружен', message: `Текст из «${imported.fileName}» готов к проверке.` })
@@ -126,7 +128,11 @@ export default function App() {
     setExportOpen(false)
 
     try {
-      await exportTextFile(value, baseName, format)
+      await exportTextFile(value, baseName, format, {
+        structure: documentStructure,
+        sourceText: text,
+        changes: screen === 'review' ? changes : [],
+      })
       setMessage({ kind: 'success', title: 'Файл сохранён', message: `Результат экспортирован в формате ${format.toUpperCase()}.` })
     } catch (cause) {
       setMessage({ kind: 'error', title: 'Ошибка экспорта', message: cause instanceof Error ? cause.message : 'Не удалось сформировать файл.' })
@@ -177,7 +183,11 @@ export default function App() {
           isProcessing={isProcessing}
           fileName={fileName}
           sourceFormat={sourceFormat}
-          onTextChange={(value) => { setText(value); if (error) setError('') }}
+          onTextChange={(value) => {
+            setText(value)
+            setDocumentStructure(null)
+            if (error) setError('')
+          }}
           onLanguageChange={setLanguage}
           onModeChange={setMode}
           onOpenUpload={() => setUploadOpen(true)}
@@ -216,6 +226,10 @@ export default function App() {
           onApplyAll={() => {
             setChanges((current) => current.map((change) => ({ ...change, decision: 'accepted' })))
             setStatusMessage('Все изменения приняты.')
+          }}
+          onRejectAll={() => {
+            setChanges((current) => current.map((change) => ({ ...change, decision: 'rejected' })))
+            setStatusMessage('Все изменения отклонены.')
           }}
           onCopy={() => void copyText(resultText)}
           onExport={() => setExportOpen(true)}

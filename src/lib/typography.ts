@@ -416,16 +416,16 @@ const rules: Rule[] = [
   }),
   regexRule({
     id: 'numero-sign',
-    name: 'Знак номера',
+    name: '№, §, рис. и стр.',
     categoryId: 'symbols',
     category: 'Специальные символы',
-    description: 'Нормализует знак номера и связывает его с числом.',
-    example: 'N 5 → № 5',
+    description: 'Связывает номер, параграф и ссылочные сокращения с числом неразрывным пробелом.',
+    example: 'N 5, § 3, рис. 2 → № 5, § 3, рис. 2',
     languages: ['ru'],
     modes: ['full'],
     priority: 230,
-    pattern: /(?:№|N)[ \t]*(\d+)/g,
-    replace: (m) => `№ ${m[1]}`,
+    pattern: /(№|N|§|рис\.|стр\.)[ \t]*(\d+)/gi,
+    replace: (m) => `${m[1].toLowerCase() === 'n' ? '№' : m[1]} ${m[2]}`,
   }),
 ]
 
