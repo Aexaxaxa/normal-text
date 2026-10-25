@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'\nimport type { TypographyChange } from '../lib/typography'
+import type { ReactNode } from 'react'
+import type { TypographyChange } from '../lib/typography'
 
 type ReviewScreenProps = {
   source: string
