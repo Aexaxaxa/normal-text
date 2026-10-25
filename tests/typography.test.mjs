@@ -1,32 +1,54 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { analyzeTypography, buildResultText, getActiveRuleCount } from '../.test-build/typography.js'
+import {
+  analyzeTypography,
+  buildResultText,
+  getActiveRuleCount,
+  getActiveRuleIds,
+  getRuleDefinitions,
+} from '../.test-build/typography.js'
 
-test('basic mode finds four categories of basic corrections', () => {
-  const source = 'Он сказал "привет"...  Потом пришёл , снова.'
+test('Russian presets expose 8 basic and 24 full rules', () => {
+  assert.equal(getActiveRuleCount('basic', 'ru'), 8)
+  assert.equal(getActiveRuleCount('full', 'ru'), 24)
+  assert.equal(getRuleDefinitions('ru').length, 24)
+})
+
+test('basic mode finds core correction categories', () => {
+  const source = 'Он сказал "привет"...  Потом пришёл , снова. Вес 15 кг, диапазон 10 - 15.'
   const changes = analyzeTypography(source, 'ru', 'basic')
-  assert.equal(getActiveRuleCount('basic'), 4)
-  assert.ok(changes.some((change) => change.ruleId === 'quotes'))
-  assert.ok(changes.some((change) => change.ruleId === 'ellipsis'))
-  assert.ok(changes.some((change) => change.ruleId === 'extra-spaces'))
-  assert.ok(changes.some((change) => change.ruleId === 'space-before-punctuation'))
+  for (const id of ['quotes-straight', 'ellipsis', 'extra-spaces', 'space-before-punctuation', 'unit-spacing', 'numeric-range']) {
+    assert.ok(changes.some((change) => change.ruleId === id), id)
+  }
 })
 
 test('full Russian mode normalizes ranges, percent and units', () => {
   const source = 'Нужно 15 кг, скидка 20%, диапазон 10 - 15.'
   const changes = analyzeTypography(source, 'ru', 'full')
   const result = buildResultText(source, changes)
-
-  assert.equal(getActiveRuleCount('full'), 7)
-  assert.equal(result, 'Нужно 15\u00A0кг, скидка 20\u00A0%, диапазон 10–15.')
+  assert.equal(result, 'Нужно 15 кг, скидка 20 %, диапазон 10–15.')
 })
 
 test('English mode uses English quotes and no space before percent', () => {
   const source = 'Use "example"... 20 % and 5 kg.'
   const changes = analyzeTypography(source, 'en', 'full')
   const result = buildResultText(source, changes)
+  assert.equal(result, 'Use “example”… 20% and 5 kg.')
+})
 
-  assert.equal(result, 'Use “example”… 20% and 5\u00A0kg.')
+test('structured Russian rules normalize phone, initials and address', () => {
+  const source = 'А. С. Пушкин, г. Москва, +7 (999) 123-45-67.'
+  const changes = analyzeTypography(source, 'ru', 'full')
+  const result = buildResultText(source, changes)
+  assert.equal(result, 'А. С. Пушкин, г. Москва, +7 999 123‑45‑67.')
+})
+
+test('custom mode applies only selected rules', () => {
+  const source = '"Текст"...  15 кг.'
+  const ids = ['quotes-straight']
+  assert.deepEqual(getActiveRuleIds('ru', 'custom', ids), ids)
+  const result = buildResultText(source, analyzeTypography(source, 'ru', 'custom', ids))
+  assert.equal(result, '«Текст»...  15 кг.')
 })
 
 test('rejected change is not applied to result', () => {
@@ -39,6 +61,6 @@ test('rejected change is not applied to result', () => {
 })
 
 test('already normalized text produces no changes', () => {
-  const source = 'Текст «уже» соответствует правилам: 15\u00A0кг и 10–15.'
+  const source = 'Текст «уже» соответствует правилам: 15 кг и 10–15.'
   assert.deepEqual(analyzeTypography(source, 'ru', 'full'), [])
 })

@@ -1,21 +1,21 @@
 import type { FormEvent } from 'react'
 import type { SourceFormat } from '../lib/files'
-
-export type Language = 'ru' | 'en'
-export type ProcessingMode = 'full' | 'basic'
+import type { TypographyLanguage, TypographyMode } from '../lib/typography'
 
 type EditorScreenProps = {
   text: string
-  language: Language
-  mode: ProcessingMode
+  language: TypographyLanguage
+  mode: TypographyMode
+  activeRuleCount: number
   error: string
   isProcessing: boolean
   fileName: string
   sourceFormat: SourceFormat | null
   onTextChange: (value: string) => void
-  onLanguageChange: (value: Language) => void
-  onModeChange: (value: ProcessingMode) => void
+  onLanguageChange: (value: TypographyLanguage) => void
+  onModeChange: (value: TypographyMode) => void
   onOpenUpload: () => void
+  onOpenRules: () => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
 }
 
@@ -23,6 +23,7 @@ export function EditorScreen({
   text,
   language,
   mode,
+  activeRuleCount,
   error,
   isProcessing,
   fileName,
@@ -31,6 +32,7 @@ export function EditorScreen({
   onLanguageChange,
   onModeChange,
   onOpenUpload,
+  onOpenRules,
   onSubmit,
 }: EditorScreenProps) {
   return (
@@ -53,9 +55,7 @@ export function EditorScreen({
 
             <form id="editor-form" className="editor-form" onSubmit={onSubmit} noValidate>
               <section className={`editor-panel${error ? ' editor-panel--error' : ''}`} aria-labelledby="source-title">
-                <label className="textarea-label" id="source-title" htmlFor="source-text">
-                  Исходный текст
-                </label>
+                <label className="textarea-label" id="source-title" htmlFor="source-text">Исходный текст</label>
                 <textarea
                   id="source-text"
                   name="sourceText"
@@ -66,39 +66,23 @@ export function EditorScreen({
                   onChange={(event) => onTextChange(event.target.value)}
                   placeholder="Введите или вставьте текст"
                 />
-                {error && (
-                  <p className="field-error" id="source-error" role="alert">
-                    {error}
-                  </p>
-                )}
+                {error && <p className="field-error" id="source-error" role="alert">{error}</p>}
               </section>
 
               <div className="upload-row">
-                <button className="file-button" type="button" onClick={onOpenUpload}>
-                  Загрузить TXT/DOCX
-                </button>
-                {fileName && (
-                  <span className="file-meta" title={fileName}>
-                    {fileName} · {sourceFormat?.toUpperCase()}
-                  </span>
-                )}
+                <button className="file-button" type="button" onClick={onOpenUpload}>Загрузить TXT/DOCX</button>
+                {fileName && <span className="file-meta" title={fileName}>{fileName} · {sourceFormat?.toUpperCase()}</span>}
               </div>
             </form>
           </div>
 
           <aside className="settings-panel" aria-labelledby="settings-title">
             <h2 id="settings-title">Параметры</h2>
-
             <div className="settings-scroll">
               <div className="field-group field-group--language">
                 <label htmlFor="language">Язык</label>
                 <div className="select-wrap">
-                  <select
-                    id="language"
-                    name="language"
-                    value={language}
-                    onChange={(event) => onLanguageChange(event.target.value as Language)}
-                  >
+                  <select id="language" value={language} onChange={(event) => onLanguageChange(event.target.value as TypographyLanguage)}>
                     <option value="ru">Русский</option>
                     <option value="en">English</option>
                   </select>
@@ -107,31 +91,22 @@ export function EditorScreen({
               </div>
 
               <div className="field-group field-group--mode">
-                <label htmlFor="mode">
-                  <span className="desktop-copy">Режим обработки</span>
-                  <span className="mobile-copy">Режим</span>
-                </label>
+                <label htmlFor="mode"><span className="desktop-copy">Режим обработки</span><span className="mobile-copy">Режим</span></label>
                 <div className="select-wrap">
-                  <select
-                    id="mode"
-                    name="mode"
-                    value={mode}
-                    onChange={(event) => onModeChange(event.target.value as ProcessingMode)}
-                  >
+                  <select id="mode" value={mode} onChange={(event) => onModeChange(event.target.value as TypographyMode)}>
                     <option value="full">Полный / ГОСТ</option>
                     <option value="basic">Базовый</option>
+                    <option value="custom">Пользовательский</option>
                   </select>
                   <span className="select-arrow" aria-hidden="true">∨</span>
                 </div>
               </div>
 
-              <p className="rules-count">Активно правил: {mode === 'full' ? 7 : 4}</p>
+              <p className="rules-count">Активно правил: {activeRuleCount}</p>
             </div>
 
             <div className="settings-actions">
-              <button className="button button--secondary" type="button">
-                Настроить правила
-              </button>
+              <button className="button button--secondary" type="button" onClick={onOpenRules}>Настроить правила</button>
               <button className="button button--primary" type="submit" form="editor-form" disabled={isProcessing}>
                 {isProcessing ? 'Обработка…' : 'Проверить текст'}
               </button>
