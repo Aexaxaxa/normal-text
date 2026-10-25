@@ -13,6 +13,28 @@ type ReviewScreenProps = {
   onBack: () => void
 }
 
+function HighlightMarker() {
+  return <mark className="result-highlight result-highlight--marker" aria-label="Позиция изменения">│</mark>
+}
+
+function SourceText({ source, changes, selectedChangeId }: Pick<ReviewScreenProps, 'source' | 'changes' | 'selectedChangeId'>) {
+  const selected = changes.find((change) => change.id === selectedChangeId)
+
+  if (!selected) return <>{source}</>
+
+  const before = source.slice(0, selected.start)
+  const selectedText = source.slice(selected.start, selected.end)
+  const after = source.slice(selected.end)
+
+  return (
+    <>
+      {before}
+      {selectedText ? <mark className="result-highlight">{selectedText}</mark> : <HighlightMarker />}
+      {after}
+    </>
+  )
+}
+
 function ResultText({ source, changes, selectedChangeId }: Pick<ReviewScreenProps, 'source' | 'changes' | 'selectedChangeId'>) {
   const sorted = [...changes].sort((a, b) => a.start - b.start)
   const parts: ReactNode[] = []
@@ -22,7 +44,11 @@ function ResultText({ source, changes, selectedChangeId }: Pick<ReviewScreenProp
     if (change.start > cursor) parts.push(source.slice(cursor, change.start))
     const value = change.decision === 'rejected' ? source.slice(change.start, change.end) : change.after
     if (selectedChangeId === change.id) {
-      parts.push(<mark key={change.id} className="result-highlight">{value}</mark>)
+      parts.push(
+        value
+          ? <mark key={change.id} className="result-highlight">{value}</mark>
+          : <span key={change.id}><HighlightMarker /></span>,
+      )
     } else {
       parts.push(value)
     }
@@ -81,7 +107,9 @@ export function ReviewScreen({
               <div className="comparison-grid">
                 <div className="comparison-pane">
                   <h2>Исходный текст</h2>
-                  <p className="result-text">{source}</p>
+                  <p className="result-text">
+                    <SourceText source={source} changes={changes} selectedChangeId={selectedChangeId} />
+                  </p>
                 </div>
                 <div className="comparison-pane comparison-pane--result">
                   <h2 id="processed-text-title">Результат</h2>
