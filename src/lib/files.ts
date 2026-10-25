@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify'
 import mammoth from 'mammoth'
-import { Document, HeadingLevel, Packer, Paragraph, TextRun } from 'docx'
+import { AlignmentType, Document, HeadingLevel, LevelFormat, Packer, Paragraph, TextRun } from 'docx'
 
 export type SourceFormat = 'txt' | 'docx'
 export type ExportFormat = SourceFormat
@@ -15,6 +15,7 @@ export type DocumentBlock = {
   type: 'paragraph' | 'heading' | 'list-item'
   level?: number
   ordered?: boolean
+  listInstance?: number
   runs: DocumentRun[]
 }
 
@@ -79,6 +80,7 @@ function parseDocxStructure(html: string): DocumentStructure {
   })
   const document = new DOMParser().parseFromString(clean, 'text/html')
   const blocks: DocumentStructure = []
+  let listInstance = 0
 
   for (const element of Array.from(document.body.children)) {
     const tag = element.tagName.toLowerCase()
@@ -98,10 +100,12 @@ function parseDocxStructure(html: string): DocumentStructure {
     }
 
     if (tag === 'ul' || tag === 'ol') {
+      listInstance += 1
       for (const item of Array.from(element.children).filter((child) => child.tagName.toLowerCase() === 'li')) {
         blocks.push({
           type: 'list-item',
           ordered: tag === 'ol',
+          listInstance,
           runs: mergeRuns(collectRuns(item)),
         })
       }
@@ -220,16 +224,18 @@ function createDocxParagraphs(
       const base = [new TextRun(line || ' ')]
       if (sourceBlock?.type === 'heading') return new Paragraph({ heading: headingValue(sourceBlock.level), children: base })
       if (sourceBlock?.type === 'list-item') {
-        const prefix = sourceBlock.ordered ? `${index + 1}. ` : '• '
-        return new Paragraph({ children: [new TextRun(prefix), ...base] })
+        return new Paragraph({
+          children: base,
+          ...(sourceBlock.ordered
+            ? { numbering: { reference: 'normal-text-numbering', level: 0, instance: sourceBlock.listInstance ?? 1 } }
+            : { bullet: { level: 0 } }),
+        })
       }
       return new Paragraph({ children: base })
     })
   }
 
-  let orderedCounter = 0
   return transformed.map((block) => {
-    if (block.type !== 'list-item' || !block.ordered) orderedCounter = 0
     const runs = block.runs.map((run) => new TextRun({
       text: run.text || ' ',
       bold: run.bold,
@@ -238,8 +244,12 @@ function createDocxParagraphs(
 
     if (block.type === 'heading') return new Paragraph({ heading: headingValue(block.level), children: runs })
     if (block.type === 'list-item') {
-      const prefix = block.ordered ? `${++orderedCounter}. ` : '• '
-      return new Paragraph({ children: [new TextRun(prefix), ...runs] })
+      return new Paragraph({
+        children: runs.length ? runs : [new TextRun(' ')],
+        ...(block.ordered
+          ? { numbering: { reference: 'normal-text-numbering', level: 0, instance: block.listInstance ?? 1 } }
+          : { bullet: { level: 0 } }),
+      })
     }
     return new Paragraph({ children: runs.length ? runs : [new TextRun(' ')] })
   })
@@ -268,7 +278,29 @@ export async function exportTextFile(
     options.sourceText,
     options.changes ?? [],
   )
-  const document = new Document({ sections: [{ children: paragraphs }] })
+  const document = new Document({
+    numbering: {
+      config: [
+        {
+          reference: 'normal-text-numbering',
+          levels: [
+            {
+              level: 0,
+              format: LevelFormat.DECIMAL,
+              text: '%1.',
+              alignment: AlignmentType.START,
+              style: {
+                paragraph: {
+                  indent: { left: 720, hanging: 260 },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    sections: [{ children: paragraphs }],
+  })
   const blob = await Packer.toBlob(document)
   downloadBlob(blob, `${baseName}.docx`)
 }
