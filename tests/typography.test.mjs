@@ -46,14 +46,14 @@ test('full Russian mode covers extra rule families', () => {
 test('English mode uses English quotes, apostrophes, em dash and English spacing', () => {
   const source = "Dr. Smith said \"don't worry\" - it is 20 % in London."
   const result = buildResultText(source, analyzeTypography(source, 'en', 'full'))
-  assert.equal(result, 'Dr. Smith said “don’t worry” — it is 20% in London.')
+  assert.equal(result, 'Dr. Smith said “don’t worry” — it is 20% in London.')
 })
 
 test('English currency and abbreviation rules differ from Russian ones', () => {
   const source = 'Price is $ 100, e. g. No. 5.'
   const changes = analyzeTypography(source, 'en', 'full')
   const result = buildResultText(source, changes)
-  assert.equal(result, 'Price is $100, e.g. No. 5.')
+  assert.equal(result, 'Price is $100, e.g. No. 5.')
   assert.ok(changes.some((change) => change.ruleId === 'currency-en'))
   assert.ok(changes.some((change) => change.ruleId === 'english-abbreviations'))
 })
