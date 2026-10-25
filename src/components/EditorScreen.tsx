@@ -55,7 +55,7 @@ export function EditorScreen({
             </div>
 
             <form id="editor-form" className="editor-form" onSubmit={onSubmit} noValidate>
-              <section className={\`editor-panel${error ? ' editor-panel--error' : ''}\`} aria-labelledby="source-title">
+              <section className={`editor-panel${error ? ' editor-panel--error' : ''}`} aria-labelledby="source-title">
                 <label className="textarea-label" id="source-title" htmlFor="source-text">Исходный текст</label>
                 <textarea
                   id="source-text"

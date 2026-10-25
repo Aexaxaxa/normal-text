@@ -103,11 +103,11 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
                     <p>{category.description}</p>
                   </div>
                   <button
-                    className={\`toggle-switch toggle-switch--${switchState}\`}
+                    className={`toggle-switch toggle-switch--${switchState}`}
                     type="button"
                     role="checkbox"
                     aria-checked={someEnabled ? 'mixed' : allEnabled}
-                    aria-label={\`${allEnabled ? 'Выключить' : 'Включить'} все правила категории «${category.title}»\`}
+                    aria-label={`${allEnabled ? 'Выключить' : 'Включить'} все правила категории «${category.title}»`}
                     onClick={() => toggleCategory(category.id)}
                   >
                     <span />
@@ -124,11 +124,11 @@ export function RulesScreen({ language, mode, customRuleIds, onBack, onSave }: R
                           <p>{rule.example}</p>
                         </div>
                         <button
-                          className={\`toggle-switch toggle-switch--small${enabled ? ' toggle-switch--on' : ''}\`}
+                          className={`toggle-switch toggle-switch--small${enabled ? ' toggle-switch--on' : ''}`}
                           type="button"
                           role="switch"
                           aria-checked={enabled}
-                          aria-label={\`${enabled ? 'Выключить' : 'Включить'} правило «${rule.name}»\`}
+                          aria-label={`${enabled ? 'Выключить' : 'Включить'} правило «${rule.name}»`}
                           onClick={() => toggleRule(rule.id)}
                         >
                           <span />

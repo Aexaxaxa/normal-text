@@ -133,7 +133,7 @@ export function ReviewScreen({
               <div className="stat-chip"><span>Отклонено</span><strong>{rejected}</strong></div>
             </div>
             <button
-              className={\`compare-button${compareMode ? ' compare-button--active' : ''}\`}
+              className={`compare-button${compareMode ? ' compare-button--active' : ''}`}
               type="button"
               aria-pressed={compareMode}
               onClick={() => setCompareMode((value) => !value)}
@@ -143,7 +143,7 @@ export function ReviewScreen({
             </button>
           </div>
 
-          <section className={\`result-card${compareMode ? ' result-card--compare' : ''}\`} aria-labelledby="processed-text-title">
+          <section className={`result-card${compareMode ? ' result-card--compare' : ''}`} aria-labelledby="processed-text-title">
             {compareMode ? (
               <div className="comparison-grid">
                 <div className="comparison-pane">
@@ -181,14 +181,14 @@ export function ReviewScreen({
 
           <div className="change-list">
             {visibleChanges.map((change) => (
-              <article className={\`change-card${selectedChangeId === change.id ? ' change-card--selected' : ''}\`} key={change.id}>
+              <article className={`change-card${selectedChangeId === change.id ? ' change-card--selected' : ''}`} key={change.id}>
                 <div className="change-card__heading">
                   <div>
                     <h3>{change.ruleName}</h3>
                     {change.after.includes('\u00a0') && <span className="nbsp-hint">⍽ — неразрывный пробел</span>}
                   </div>
                   {change.decision !== 'pending' && (
-                    <span className={\`decision-badge decision-badge--${change.decision}\`}>
+                    <span className={`decision-badge decision-badge--${change.decision}`}>
                       {change.decision === 'accepted' ? 'Принято' : 'Отклонено'}
                     </span>
                   )}

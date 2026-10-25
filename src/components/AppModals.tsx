@@ -122,7 +122,7 @@ export function MessageModal({
         <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">
           <IconX size={20} stroke={1.8} aria-hidden="true" />
         </button>
-        <div className={\`message-icon message-icon--${kind}\`} aria-hidden="true">
+        <div className={`message-icon message-icon--${kind}`} aria-hidden="true">
           {kind === 'success'
             ? <IconCircleCheck size={27} stroke={1.8} />
             : <IconAlertTriangle size={25} stroke={1.8} />}
