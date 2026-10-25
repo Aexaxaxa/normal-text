@@ -67,11 +67,11 @@ describe('Requirement 2: review and decision workflow', () => {
 
     const acceptButtons = screen.getAllByRole('button', { name: 'Принять' })
     await user.click(acceptButtons[0])
-    expect(screen.getByText('Принято')).toBeInTheDocument()
+    expect(screen.getByText('Принято', { selector: '.decision-badge' })).toBeInTheDocument()
 
     const rejectButtons = screen.getAllByRole('button', { name: 'Отклонить' })
     await user.click(rejectButtons[0])
-    expect(screen.getByText('Отклонено')).toBeInTheDocument()
+    expect(screen.getByText('Отклонено', { selector: '.decision-badge' })).toBeInTheDocument()
   })
 
   test('Apply all accepts every change and shows confirmation', async () => {
@@ -80,7 +80,7 @@ describe('Requirement 2: review and decision workflow', () => {
 
     await user.click(screen.getByRole('button', { name: 'Принять все' }))
 
-    expect(screen.getAllByText('Принято')).toHaveLength(2)
+    expect(document.querySelectorAll('.decision-badge--accepted')).toHaveLength(2)
     expect(screen.getByText('Все изменения приняты.')).toBeInTheDocument()
   })
 
@@ -90,7 +90,7 @@ describe('Requirement 2: review and decision workflow', () => {
 
     await user.click(screen.getByRole('button', { name: 'Сравнить тексты' }))
     expect(screen.getByRole('heading', { name: 'Исходный текст' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Результат' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Результат', level: 2 })).toBeInTheDocument()
 
     await user.click(screen.getAllByRole('button', { name: 'Посмотреть' })[0])
 

@@ -28,7 +28,7 @@ describe('Requirement 1: text validation and processing', () => {
     renderApp()
 
     await user.type(
-      screen.getByLabelText('Исходный текст'),
+      screen.getByRole('textbox', { name: 'Исходный текст' }),
       'Он сказал "привет"...  Вес 15 кг, диапазон 10 - 15.',
     )
     await user.click(screen.getByRole('button', { name: /Проверить текст/i }))
@@ -42,7 +42,7 @@ describe('Requirement 1: text validation and processing', () => {
     const user = userEvent.setup()
     renderApp()
 
-    await user.type(screen.getByLabelText('Исходный текст'), 'Привет.')
+    await user.type(screen.getByRole('textbox', { name: 'Исходный текст' }), 'Привет.')
     await user.click(screen.getByRole('button', { name: /Проверить текст/i }))
 
     expect(await screen.findByRole('heading', { name: 'Изменений не найдено' }, { timeout: 1500 })).toBeInTheDocument()
