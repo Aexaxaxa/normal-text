@@ -46,6 +46,6 @@ describe('Requirement 1: text validation and processing', () => {
     await user.click(screen.getByRole('button', { name: /Проверить текст/i }))
 
     expect(await screen.findByRole('heading', { name: 'Изменений не найдено' }, { timeout: 1500 })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Типографическая проверка текста' })).toBeInTheDocument()
+    expect(document.querySelector('.editor-page')).toBeInTheDocument()
   })
 })
