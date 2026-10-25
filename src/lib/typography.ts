@@ -378,7 +378,7 @@ const rules: Rule[] = [
     modes: ['basic', 'full'],
     priority: 12,
     pattern: /([A-Za-z])'([A-Za-z])/g,
-    replace: (m) => \`${m[1]}’${m[2]}\`,
+    replace: (m) => `${m[1]}’${m[2]}`,
   }),
   regexRule({
     id: 'ru-hyphen-izza-izpod',
@@ -391,7 +391,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 22,
     pattern: /\bиз[ \t]+(за|под)\b/gi,
-    replace: (m) => \`из-${m[1].toLowerCase()}\`,
+    replace: (m) => `из-${m[1].toLowerCase()}`,
   }),
   regexRule({
     id: 'ru-hyphen-koe',
@@ -404,7 +404,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 23,
     pattern: /\b(кое|кой)[ \t]+([А-Яа-яЁё]+)/gi,
-    replace: (m) => \`${m[1]}-${m[2]}\`,
+    replace: (m) => `${m[1]}-${m[2]}`,
   }),
   regexRule({
     id: 'ru-hyphen-particles',
@@ -417,7 +417,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 24,
     pattern: /\b([А-Яа-яЁё]+)[ \t]+(то|либо|нибудь)\b/gi,
-    replace: (m) => \`${m[1]}-${m[2].toLowerCase()}\`,
+    replace: (m) => `${m[1]}-${m[2].toLowerCase()}`,
   }),
   regexRule({
     id: 'trailing-spaces',
@@ -456,7 +456,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 71,
     pattern: /(^|[\s([{“])((?:a|an|the|in|on|at|to|of|by|as|or|and|but))[ \t]+(?=\S)/gi,
-    replace: (m) => \`${m[1]}${m[2]} \`,
+    replace: (m) => `${m[1]}${m[2]} `,
   }),
   regexRule({
     id: 'unit-powers',
@@ -471,7 +471,7 @@ const rules: Rule[] = [
     pattern: (language) => language === 'ru'
       ? /(\d(?:[.,]\d+)?)[ \t]+(мм|см|дм|м|км)(?:\^?)(2|3)(?=$|[\s.,;:!?])/gi
       : /(\d(?:[.,]\d+)?)[ \t]+(mm|cm|dm|m|km)(?:\^?)(2|3)(?=$|[\s.,;:!?])/gi,
-    replace: (m) => \`${m[1]} ${m[2]}${m[3] === '2' ? '²' : '³'}\`,
+    replace: (m) => `${m[1]} ${m[2]}${m[3] === '2' ? '²' : '³'}`,
   }),
   regexRule({
     id: 'pieces-nbsp-ru',
@@ -484,7 +484,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 80,
     pattern: /(\d(?:[.,]\d+)?)[ \t]+(?=шт\.?(?:$|[\s,;:!?]))/gi,
-    replace: (m) => \`${m[1]} \`,
+    replace: (m) => `${m[1]} `,
   }),
   regexRule({
     id: 'dpi-nbsp',
@@ -497,7 +497,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 82,
     pattern: /(\d+(?:[.,]\d+)?)[ \t]+(?=(?:dpi|lpi)(?:$|[\s.,;:!?]))/gi,
-    replace: (m) => \`${m[1]} \`,
+    replace: (m) => `${m[1]} `,
   }),
   regexRule({
     id: 'magnitude-nbsp-ru',
@@ -510,7 +510,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 83,
     pattern: /(\d(?:[.,]\d+)?)[ \t]+(?=(?:тыс\.?|млн|млрд|трлн)(?:$|[\s.,;:!?]))/gi,
-    replace: (m) => \`${m[1]} \`,
+    replace: (m) => `${m[1]} `,
   }),
   regexRule({
     id: 'currency-en',
@@ -523,7 +523,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 111,
     pattern: /([$£€¥])[ \t]+(\d(?:[.,]\d+)?)/g,
-    replace: (m) => \`${m[1]}${m[2]}\`,
+    replace: (m) => `${m[1]}${m[2]}`,
   }),
   regexRule({
     id: 'fraction-symbols',
@@ -562,7 +562,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 142,
     pattern: /\b(\d{4})-(\d{2})-(\d{2})\b/g,
-    replace: (m) => \`${m[3]}.${m[2]}.${m[1]}\`,
+    replace: (m) => `${m[3]}.${m[2]}.${m[1]}`,
   }),
   regexRule({
     id: 'day-month-nbsp-ru',
@@ -575,7 +575,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 148,
     pattern: /(\d{1,2})[ \t]+(?=(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)(?:$|[\s,.;:!?]))/gi,
-    replace: (m) => \`${m[1]} \`,
+    replace: (m) => `${m[1]} `,
   }),
   regexRule({
     id: 'year-nbsp-ru',
@@ -588,7 +588,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 149,
     pattern: /(\d{4})[ \t]+(?=г\.(?:$|[\s,;:!?]))/gi,
-    replace: (m) => \`${m[1]} \`,
+    replace: (m) => `${m[1]} `,
   }),
   regexRule({
     id: 'particles-nbsp-ru',
@@ -601,7 +601,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 172,
     pattern: /([А-Яа-яЁё]+)[ \t]+(ли|ль|же|бы|б)(?=$|[\s,.;:!?])/gi,
-    replace: (m) => \`${m[1]} ${m[2]}\`,
+    replace: (m) => `${m[1]} ${m[2]}`,
   }),
   regexRule({
     id: 'company-nbsp-ru',
@@ -614,7 +614,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 174,
     pattern: /\b(ООО|ОАО|ЗАО|ПАО|НИИ)[ \t]+(?=[«"А-ЯЁA-Z])/g,
-    replace: (m) => \`${m[1]} \`,
+    replace: (m) => `${m[1]} `,
   }),
   regexRule({
     id: 'ps-nbsp-ru',
@@ -640,7 +640,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 178,
     pattern: /\b(Mr|Mrs|Ms|Dr|Prof)\.[ \t]+(?=[A-Z])/g,
-    replace: (m) => \`${m[1]}. \`,
+    replace: (m) => `${m[1]}. `,
   }),
   regexRule({
     id: 'english-abbreviations',
@@ -653,7 +653,7 @@ const rules: Rule[] = [
     modes: ['full'],
     priority: 179,
     pattern: /\b(e|i)\.[ \t]+(g|e)\./gi,
-    replace: (m) => \`${m[1]}.${m[2]}.\`,
+    replace: (m) => `${m[1]}.${m[2]}.`,
   }),
   regexRule({
     id: 'number-sign-en',
@@ -692,7 +692,7 @@ const rules: Rule[] = [
     modes: [],
     priority: 235,
     pattern: /(\d(?:[.,]\d+)?)[ \t]+руб\.?/gi,
-    replace: (m) => \`${m[1]} ₽\`,
+    replace: (m) => `${m[1]} ₽`,
   }),
   regexRule({
     id: 'numeric-range',
