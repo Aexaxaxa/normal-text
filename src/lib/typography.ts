@@ -113,7 +113,7 @@ const rules: Rule[] = [
     modes: ['basic', 'full'],
     priority: 10,
     pattern: /"([^"\n]+)"/g,
-    replace: (m, language) => language === 'ru' ? `«${m[1]}»` : `“${m[1]}”`,
+    replace: (m, language) => language === 'ru' ? `«${m[1]}»` : `“${m[1].replace(/([A-Za-z])'([A-Za-z])/g, '$1’$2')}”`,
   }),
   regexRule({
     id: 'quotes-nested',
@@ -138,8 +138,8 @@ const rules: Rule[] = [
     languages: ['ru', 'en'],
     modes: ['basic', 'full'],
     priority: 30,
-    pattern: /([A-Za-zА-Яа-яЁё])[ \t]+-[ \t]+([A-Za-zА-Яа-яЁё])/g,
-    replace: (m) => `${m[1]} — ${m[2]}`,
+    pattern: /(?<=[A-Za-zА-Яа-яЁё»”"'\)])([ \t]+-[ \t]+)(?=[A-Za-zА-Яа-яЁё«“"'\(])/g,
+    replace: () => ' — ',
   }),
   regexRule({
     id: 'ordinal-nbhyphen',
@@ -190,7 +190,7 @@ const rules: Rule[] = [
     languages: ['ru', 'en'],
     modes: ['basic', 'full'],
     priority: 65,
-    pattern: /[ \t]+(?=[,.;:!?])/g,
+    pattern: /[ \t]+(?=[,.;:!?](?!=))/g,
     replace: () => '',
   }),
   regexRule({
@@ -203,7 +203,7 @@ const rules: Rule[] = [
     languages: ['ru'],
     modes: ['full'],
     priority: 70,
-    pattern: /(^|[\s([{«])(в|к|с|у|о|и|а|но|на|за|по|из|от|до|во|ко|со)[ \t]+(?=[А-Яа-яЁё])/gi,
+    pattern: /(^|[\s([{«])(в|к|с|у|о|и|а|но|на|за|по|из|от|до|во|ко|со)[ \t]+(?=\S)/gi,
     replace: (m) => `${m[1]}${m[2]} `,
   }),
   regexRule({
@@ -390,8 +390,8 @@ const rules: Rule[] = [
     languages: ['ru'],
     modes: ['full'],
     priority: 22,
-    pattern: /\bиз[ \t]+(за|под)\b/gi,
-    replace: (m) => `из-${m[1].toLowerCase()}`,
+    pattern: /(^|[\s([{«])из[ \t]+(за|под)(?=$|[\s,.;:!?\])}»])/gi,
+    replace: (m) => `${m[1]}из-${m[2].toLowerCase()}`,
   }),
   regexRule({
     id: 'ru-hyphen-koe',
@@ -403,8 +403,8 @@ const rules: Rule[] = [
     languages: ['ru'],
     modes: ['full'],
     priority: 23,
-    pattern: /\b(кое|кой)[ \t]+([А-Яа-яЁё]+)/gi,
-    replace: (m) => `${m[1]}-${m[2]}`,
+    pattern: /(^|[\s([{«])(кое|кой)[ \t]+([А-Яа-яЁё]+)/gi,
+    replace: (m) => `${m[1]}${m[2]}-${m[3]}`,
   }),
   regexRule({
     id: 'ru-hyphen-particles',
@@ -416,8 +416,8 @@ const rules: Rule[] = [
     languages: ['ru'],
     modes: ['full'],
     priority: 24,
-    pattern: /\b([А-Яа-яЁё]+)[ \t]+(то|либо|нибудь)\b/gi,
-    replace: (m) => `${m[1]}-${m[2].toLowerCase()}`,
+    pattern: /(^|[\s([{«])([А-Яа-яЁё]+)[ \t]+(то|либо|нибудь)(?=$|[\s,.;:!?\])}»])/gi,
+    replace: (m) => `${m[1]}${m[2]}-${m[3].toLowerCase()}`,
   }),
   regexRule({
     id: 'trailing-spaces',
