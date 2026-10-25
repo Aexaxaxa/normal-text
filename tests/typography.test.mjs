@@ -44,7 +44,7 @@ test('full Russian mode covers extra rule families', () => {
 })
 
 test('English mode uses English quotes, apostrophes, em dash and English spacing', () => {
-  const source = 'Dr. Smith said "don\\'t worry" - it is 20 % in London.'
+  const source = "Dr. Smith said \"don't worry\" - it is 20 % in London."
   const result = buildResultText(source, analyzeTypography(source, 'en', 'full'))
   assert.equal(result, 'Dr. Smith said “don’t worry” — it is 20% in London.')
 })
