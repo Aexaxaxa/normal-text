@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "tsc src/lib/typography.ts --outDir .test-build --module ES2022 --moduleResolution Bundler --target ES2022 --skipLibCheck && node --test tests/typography.test.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",
